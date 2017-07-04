@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
 //                String sss = new String(res_ult.body().bytes());
 //                Log.d("json",sss);
-                String json = response.body().toString();
+                String json = response.body().string();
                 try {
                     JSONObject jsonObject = new JSONObject(json);
                     String s = (String) jsonObject.get("token");
