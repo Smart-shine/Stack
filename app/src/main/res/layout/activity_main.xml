@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context="anqi.stack.Activity.MainActivity">
 
+
+
     <Button
         android:id="@+id/bt1"
         android:onClick="click"

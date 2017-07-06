@@ -1,9 +1,14 @@
 package anqi.stack.util;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
+import android.view.Window;
 
 import com.google.gson.JsonSyntaxException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,6 +17,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
+import anqi.stack.Activity.JsonTest;
+import anqi.stack.Activity.MainActivity;
+import anqi.stack.Activity.TestInterface;
+import anqi.stack.R;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -19,6 +28,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static anqi.stack.Activity.MainActivity.tool;
 
 /**
  * 封装网络请求，get,post方法
@@ -60,30 +71,41 @@ public class NetUtil {
      * @param url 地址
      * @return 结果json
      */
-    public static JSONObject doGetSync(String url, Map params) {
+    public static void doGetSync(String url, Map params, final Context context) {
 
         final Request request = new Request.Builder()
                 .url(url)
-//                .header("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0) Gecko/20100101 Firefox/52.0")
-//                .addHeader("Accept", "application/json, text/plain, */*")
-//                .addHeader("Accept-Encoding","gzip, deflate")
-//                .addHeader("Accept-Language","zh-CN,en-US;q=0.7,en;q=0.3")
-//                .addHeader("Host","9.112.239.179:8080")
-//                .addHeader("Referer","http://9.112.239.179:8080/p4-web-pg-debug/")
-//                .addHeader("IPC_TOKEN", (String) params.get("token"))
+                .header("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0) Gecko/20100101 Firefox/52.0")
+                .addHeader("Accept", "application/json, text/plain, */*")
+                .addHeader("Accept-Encoding","gzip, deflate")
+                .addHeader("Accept-Language","zh-CN,en-US;q=0.7,en;q=0.3")
+                .addHeader("Host","9.112.239.179:8080")
+                .addHeader("Referer","http://9.112.239.179:8080/p4-web-pg-debug/")
+                .addHeader("IPC_TOKEN", (String) params.get("token"))
                 .build();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Response response = client.newCall(request)
+                            .execute();
+                    String res = response.body().string();
+                   final JSONArray resJson_ = new JSONArray(res);
 
-        try {
-            Response response = client.newCall(request)
-                    .execute();
-            String res = response.body().string();
-            resJson = new JSONObject(res);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return resJson;
+                    JsonTest jsonTest = new JsonTest(context);
+                    jsonTest.json(resJson_);
+                    ((TestInterface)context).json(resJson_);
+
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
     /**
@@ -166,7 +188,7 @@ public class NetUtil {
      * @param params
      * @return
      */
-    public static JSONObject doPostAsync(String url, Map params) {
+    public static void doPostAsync(String url, Map params) {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject object = new JSONObject();
         try {
@@ -178,7 +200,7 @@ public class NetUtil {
             e.printStackTrace();
         }
         RequestBody body = RequestBody.create(JSON, String.valueOf(object));
-        Request request = new Request.Builder().url(url).post(body).build();
+        final Request request = new Request.Builder().url(url).post(body).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -187,13 +209,19 @@ public class NetUtil {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(final Call call, Response response) throws IOException {
                 String json = response.body().string();
                 try {
-                    resJson = new JSONObject(json);
+                    final JSONObject resJson = new JSONObject(json);
                     String s = (String) resJson.get("token");
-                    Log.d("success", s);
 
+                    tool.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainActivity.initjson(resJson);
+                        }
+                    });
+                    Log.d("success", s);
                 } catch (JsonSyntaxException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
@@ -201,8 +229,16 @@ public class NetUtil {
                 }
             }
         });
-        while (resJson ==null) Log.d("等待","wait");
-        return resJson;
+    }
+
+    public static Dialog showWaitingDialog(Context context){
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.setContentView(R.layout.dialog_custom_progress);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        return dialog;
     }
 
 

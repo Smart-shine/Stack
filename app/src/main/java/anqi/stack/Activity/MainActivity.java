@@ -1,11 +1,14 @@
 package anqi.stack.Activity;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,14 +18,19 @@ import java.util.Map;
 import anqi.stack.R;
 import anqi.stack.util.NetUtil;
 
-public class MainActivity extends AppCompatActivity {
+import static anqi.stack.util.NetUtil.showWaitingDialog;
 
-//    private final OkHttpClient client = new OkHttpClient();
-    private TextView text;
+public class MainActivity extends AppCompatActivity implements TestInterface{
+
+    //    private final OkHttpClient client = new OkHttpClient();
+    private static TextView text;
     private final String basePath = "http://9.112.239.137:8080/p4-web-pg-debug";
-
-    private String token;
-
+    private static String token;
+    public static Handler tool = new Handler();
+    //    public static Handler tool0 = new Handler();
+    private static JSONObject _json;
+    static Dialog waiting;
+    static Dialog waiting0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,45 +40,70 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void click(View view) {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", "p4admin");
+        params.put("password", "aq1sw2de");
+        NetUtil.doPostAsync(basePath + "/api/auth/login", params);
+        waiting = showWaitingDialog(this);
 
-        Map<String,String> params = new HashMap<>();
-        params.put("username","p4admin");
-        params.put("password","aq1sw2de");
-        JSONObject result = NetUtil.doPostAsync(basePath+"/api/auth/login",params);
-        try {
-            text.setText(result.getString("token"));
-            token = result.getString("token");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-//        final Request request = new Request.Builder().url("http://api.map.baidu.com/location/ip?ak=请输入您的AK&coor=bd09ll").build();
     }
 
     public void click_json(View view) {
-
 //        Gson json = new Gson();
 //        String ss = json.fromJson("hsoghoang", String.class);
 //        String you = json.toJson(false);
 //
 //        Log.d("json", ss + you);
 
-
     }
 
-    public void get(View view){
+    public void get(View view) {
         String test = "http://api.map.baidu.com/location/ip?ak=请输入您的AK&coor=bd09ll";
-        String url = basePath+"/app/nls/ZH_CN.json";
+        String url = " http://9.112.239.179:8080/p4-web-pg-debug/api/requests?noCache=1499308548133";
         Map params = new HashMap();
-        params.put("token",token);
-        JSONObject res = NetUtil.doGetSync(test,params);
+        params.put("token", token);
+        NetUtil.doGetSync(url, params,this);
+//        waiting0 = showWaitingDialog(this);
+    }
 
+    public static void initjson(JSONObject json) {
+        _json = json;
         try {
-            Log.d("get test",res.getString("message"));
-            text.setText(res.getString("message"));
+            text.setText(_json.getString("id"));
+            token = _json.getString("token");
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        waiting.dismiss();
+
+    }
+
+    public static void initjsonArray(JSONArray json) {
+        JSONArray _json;
+        _json = json;
+        try {
+            text.setText(_json.get(0).toString());
+//            token = _json.getString("token");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        waiting0.dismiss();
+
+    }
+
+    @Override
+    public void json(JSONArray jsonObject) {
+        Log.d("999999999999","333333333333");
     }
 
 
+//    @Override
+//    public void json(JSONArray jsonObject) {
+//        JSONArray jsonArray = jsonObject;
+//        try {
+//            text.setText(jsonArray.get(0).toString());
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
