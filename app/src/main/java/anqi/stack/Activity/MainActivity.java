@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements TestInterface{
         Map params = new HashMap();
         params.put("token", token);
         NetUtil.doGetSync(url, params,this);
-//        waiting0 = showWaitingDialog(this);
+        waiting0 = showWaitingDialog(this);
     }
 
     public static void initjson(JSONObject json) {
@@ -87,13 +87,25 @@ public class MainActivity extends AppCompatActivity implements TestInterface{
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        waiting0.dismiss();
-
     }
 
     @Override
     public void json(JSONArray jsonObject) {
         Log.d("999999999999","333333333333");
+        final JSONArray res = jsonObject;
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    text.setText(res.get(0).toString());
+                    waiting0.dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
 

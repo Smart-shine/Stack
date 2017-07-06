@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import anqi.stack.Activity.JsonTest;
@@ -43,27 +44,27 @@ public class NetUtil {
     private static long ConnecTimeOut = 10;//10秒链接超时
     private static long ReadTimeOut = 10;//10秒读超时
     private static long WriteTimeOut = 10;//10秒写超时
-    private static JSONObject resJson;
+//    private static JSONObject resJson;
 
 
     /**
      * 初始化Client,设置相应超时参数
      */
-//     static  {
-//        if (builder == null) {
-//            lock.lock();
-//            builder = new OkHttpClient.Builder();
-//            lock.unlock();
-//        }
-//        if (client == null) {
-//            lock.lock();
-//            client = builder.connectTimeout(ConnecTimeOut, TimeUnit.SECONDS)
-//                    .writeTimeout(WriteTimeOut, TimeUnit.SECONDS)
-//                    .readTimeout(ReadTimeOut, TimeUnit.SECONDS)
-//                    .build();
-//            lock.unlock();
-//        }
-//    }
+     static  {
+        if (builder == null) {
+            lock.lock();
+            builder = new OkHttpClient.Builder();
+            lock.unlock();
+        }
+        if (client == null) {
+            lock.lock();
+            client = builder.connectTimeout(ConnecTimeOut, TimeUnit.SECONDS)
+                    .writeTimeout(WriteTimeOut, TimeUnit.SECONDS)
+                    .readTimeout(ReadTimeOut, TimeUnit.SECONDS)
+                    .build();
+            lock.unlock();
+        }
+    }
 
     /**
      * 同步get请求
@@ -96,8 +97,6 @@ public class NetUtil {
                     jsonTest.json(resJson_);
                     ((TestInterface)context).json(resJson_);
 
-
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
@@ -115,7 +114,7 @@ public class NetUtil {
      * @param params
      * @return
      */
-    public static JSONObject doPostSyc(String url, Map params) {
+    public static void doPostSyc(String url, Map params) {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject object = new JSONObject();
         try {
@@ -134,13 +133,12 @@ public class NetUtil {
         try {
             Response response = client.newCall(request).execute();
             String Result = response.body().string();
-            resJson = new JSONObject(Result);
+            new JSONObject(Result);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return resJson;
     }
 
     /**
@@ -149,7 +147,7 @@ public class NetUtil {
      * @param url
      * @return
      */
-    public static JSONObject doGetAsync(String url, Map params) {
+    public static void doGetAsync(String url, Map params) {
         final Request request = new Request.Builder()
                 .url(url)
                 .header("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0) Gecko/20100101 Firefox/52.0")
@@ -171,14 +169,12 @@ public class NetUtil {
             public void onResponse(Call call, Response response) throws IOException {
                 String res = response.body().string();
                 try {
-                    resJson = new JSONObject(res);
+                    new JSONObject(res);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
-        while (resJson ==null) Log.d("get等待","wait");
-        return resJson;
     }
 
     /**
