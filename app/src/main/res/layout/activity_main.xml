@@ -36,6 +36,13 @@
         android:text="同步post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/db"
+        android:onClick="click"
+        android:layout_below="@id/SyncPost"
+        android:text="db测试"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
     <TextView

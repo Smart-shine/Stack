@@ -6,7 +6,7 @@ package anqi.stack.config;
  * Created by niuanqi on 2017/7/4.
  */
 
-public  class url {
+public  class UrlManager {
 
     public final static String BASEPATH = "http://9.112.239.137:8080/p4-web-pg-debug";
     public final static String Login = "http://9.112.239.137:8080/p4-web-pg-debug"+"/api/auth/login";
@@ -14,4 +14,8 @@ public  class url {
     private final static String LOGIN = "http://";
     private final static String PAGW = "http://";
     private final static String basePath = "http://";
+
+    public final static String testGetUrl = "http://9.112.239.179:8080/p4-web-pg-debug/api/requests?noCache=1499308548133";
+
+    public final static String baiduTestUrl = "http://api.map.baidu.com/location/ip?ak=请输入您的AK&coor=bd09ll";
 }

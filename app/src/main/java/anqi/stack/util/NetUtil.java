@@ -26,7 +26,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * 封装网络请求，get,post方法
+ * 封装网络请求，get,post方法,同时提供了Dialog方法
  * Created by niuanqi on 2017/7/4.
  */
 
@@ -55,6 +55,9 @@ public class NetUtil {
                     .build();
             lock.unlock();
         }
+    }
+    public static OkHttpClient getInstent(){
+        return client;
     }
 
     /**
