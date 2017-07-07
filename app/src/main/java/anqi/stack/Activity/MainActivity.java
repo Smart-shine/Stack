@@ -1,6 +1,8 @@
 package anqi.stack.Activity;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -37,14 +39,44 @@ public class MainActivity extends AppCompatActivity implements TestInterface{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         text = (TextView) findViewById(R.id.text);
+        SQLiteDatabase db = this.openOrCreateDatabase("stack.db", Context.MODE_PRIVATE,null);
     }
 
     public void click(View view) {
-        Map<String, String> params = new HashMap<>();
-        params.put("username", "p4admin");
-        params.put("password", "aq1sw2de");
-        NetUtil.doPostAsync(basePath + "/api/auth/login", params);
-        waiting = showWaitingDialog(this);
+        switch (view.getId()){
+            case R.id.AsyncPost:
+                waiting = showWaitingDialog(this);
+                Map<String, String> params = new HashMap<>();
+                params.put("username", "p4admin");
+                params.put("password", "aq1sw2de");
+                NetUtil.doPostAsync(basePath + "/api/auth/login", params,this,waiting);
+                break;
+            case R.id.AsyncGet:
+                waiting0 = showWaitingDialog(this);
+                String test = "http://api.map.baidu.com/location/ip?ak=请输入您的AK&coor=bd09ll";
+                String url = " http://9.112.239.179:8080/p4-web-pg-debug/api/requests?noCache=1499308548133";
+                Map AsyncGetParams = new HashMap();
+                AsyncGetParams.put("token", token);
+                NetUtil.doGetAsync(url, AsyncGetParams,this,waiting0);
+                break;
+            case R.id.SyncGet:
+                Dialog waiting0 = showWaitingDialog(this);
+//                String tests = "http://api.map.baidu.com/location/ip?ak=请输入您的AK&coor=bd09ll";
+                String SyncGeturl = " http://9.112.239.179:8080/p4-web-pg-debug/api/requests?noCache=1499308548133";
+                Map SyncGetParams = new HashMap();
+                SyncGetParams.put("token", token);
+                NetUtil.doGetSync(SyncGeturl, SyncGetParams,this,waiting0);
+                break;
+            case R.id.SyncPost:
+                Dialog dialog = showWaitingDialog(this);
+                Map<String, String> SyncPostParam = new HashMap<>();
+                SyncPostParam.put("username", "p4admin");
+                SyncPostParam.put("password", "aq1sw2de");
+                NetUtil.doPostSyc(basePath + "/api/auth/login", SyncPostParam,this,dialog);
+                break;
+
+        }
+
 
     }
 
@@ -55,15 +87,6 @@ public class MainActivity extends AppCompatActivity implements TestInterface{
 //
 //        Log.d("json", ss + you);
 
-    }
-
-    public void get(View view) {
-        String test = "http://api.map.baidu.com/location/ip?ak=请输入您的AK&coor=bd09ll";
-        String url = " http://9.112.239.179:8080/p4-web-pg-debug/api/requests?noCache=1499308548133";
-        Map params = new HashMap();
-        params.put("token", token);
-        NetUtil.doGetSync(url, params,this);
-        waiting0 = showWaitingDialog(this);
     }
 
     public static void initjson(JSONObject json) {
@@ -90,19 +113,29 @@ public class MainActivity extends AppCompatActivity implements TestInterface{
     }
 
     @Override
-    public void json(JSONArray jsonObject) {
+    public void json(final String result, final Dialog dialog) {
         Log.d("999999999999","333333333333");
-        final JSONArray res = jsonObject;
+        String flag = result.substring(0,1);
+        if(flag.equals("{")){
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                token = jsonObject.getString("token");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if(flag.equals("["))
+            try {
+                JSONArray jsonArray = new JSONArray(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    text.setText(res.get(0).toString());
-                    waiting0.dismiss();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    text.setText(result);
+                    dialog.dismiss();
             }
         });
 

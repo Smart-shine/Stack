@@ -1,9 +1,8 @@
 package anqi.stack.Activity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.util.Log;
-
-import org.json.JSONArray;
 
 /**
  * Created by niuanqi on 2017/7/4.
@@ -18,7 +17,7 @@ public class JsonTest  implements TestInterface{
 
 
     @Override
-    public void json(JSONArray jsonObject) {
+    public void json(String result, Dialog dialog) {
 //        Toast.makeText(context, "接口", Toast.LENGTH_SHORT).show();
         Log.d("--------------","-----------");
     }

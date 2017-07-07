@@ -6,9 +6,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.Window;
 
-import com.google.gson.JsonSyntaxException;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,8 +15,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import anqi.stack.Activity.JsonTest;
-import anqi.stack.Activity.MainActivity;
 import anqi.stack.Activity.TestInterface;
 import anqi.stack.R;
 import okhttp3.Call;
@@ -29,8 +24,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static anqi.stack.Activity.MainActivity.tool;
 
 /**
  * 封装网络请求，get,post方法
@@ -44,8 +37,6 @@ public class NetUtil {
     private static long ConnecTimeOut = 10;//10秒链接超时
     private static long ReadTimeOut = 10;//10秒读超时
     private static long WriteTimeOut = 10;//10秒写超时
-//    private static JSONObject resJson;
-
 
     /**
      * 初始化Client,设置相应超时参数
@@ -72,7 +63,7 @@ public class NetUtil {
      * @param url 地址
      * @return 结果json
      */
-    public static void doGetSync(String url, Map params, final Context context) {
+    public static void doGetSync(String url, Map params, final Context context, final Dialog dialog) {
 
         final Request request = new Request.Builder()
                 .url(url)
@@ -91,15 +82,9 @@ public class NetUtil {
                     Response response = client.newCall(request)
                             .execute();
                     String res = response.body().string();
-                   final JSONArray resJson_ = new JSONArray(res);
-
-                    JsonTest jsonTest = new JsonTest(context);
-                    jsonTest.json(resJson_);
-                    ((TestInterface)context).json(resJson_);
+                    ((TestInterface)context).json(res,dialog);
 
                 } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -114,7 +99,7 @@ public class NetUtil {
      * @param params
      * @return
      */
-    public static void doPostSyc(String url, Map params) {
+    public static void doPostSyc(String url, Map params, final Context context, final Dialog dialog) {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject object = new JSONObject();
         try {
@@ -130,15 +115,18 @@ public class NetUtil {
                 .url(url)
                 .post(body)
                 .build();
-        try {
-            Response response = client.newCall(request).execute();
-            String Result = response.body().string();
-            new JSONObject(Result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Response response = client.newCall(request).execute();
+                    String Result = response.body().string();
+                    ((TestInterface)context).json(Result,dialog);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     /**
@@ -147,7 +135,7 @@ public class NetUtil {
      * @param url
      * @return
      */
-    public static void doGetAsync(String url, Map params) {
+    public static void doGetAsync(String url, Map params, final Context context, final Dialog dialog) {
         final Request request = new Request.Builder()
                 .url(url)
                 .header("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0) Gecko/20100101 Firefox/52.0")
@@ -167,12 +155,9 @@ public class NetUtil {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String res = response.body().string();
-                try {
-                    new JSONObject(res);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                String result = response.body().string();
+                ((TestInterface)context).json(result,dialog);
+
             }
         });
     }
@@ -184,7 +169,7 @@ public class NetUtil {
      * @param params
      * @return
      */
-    public static void doPostAsync(String url, Map params) {
+    public static void doPostAsync(String url, Map params, final Context context, final Dialog dialog) {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject object = new JSONObject();
         try {
@@ -206,23 +191,24 @@ public class NetUtil {
 
             @Override
             public void onResponse(final Call call, Response response) throws IOException {
-                String json = response.body().string();
-                try {
-                    final JSONObject resJson = new JSONObject(json);
-                    String s = (String) resJson.get("token");
-
-                    tool.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            MainActivity.initjson(resJson);
-                        }
-                    });
-                    Log.d("success", s);
-                } catch (JsonSyntaxException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                String result = response.body().string();
+                ((TestInterface)context).json(result,dialog);
+//                try {
+//                    final JSONObject resJson = new JSONObject(json);
+//                    String s = (String) resJson.get("token");
+//
+////                    tool.post(new Runnable() {
+////                        @Override
+////                        public void run() {
+////                            MainActivity.initjson(resJson);
+////                        }
+////                    });
+//                    Log.d("success", s);
+//                } catch (JsonSyntaxException e) {
+//                    e.printStackTrace();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
     }
