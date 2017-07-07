@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="anqi.stack.Activity.MainActivity">
+    tools:context="anqi.stack.activity.MainActivity">
 
 
 
@@ -44,6 +44,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+<ScrollView
+    android:layout_below="@id/db"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/text"
@@ -54,5 +58,7 @@
         android:textSize="18dp"
         android:layout_centerInParent="true"
         />
+</ScrollView>
+
 
 </RelativeLayout>

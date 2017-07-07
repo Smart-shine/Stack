@@ -1,11 +1,10 @@
-package anqi.stack.Activity;
+package anqi.stack.activity;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -23,7 +22,7 @@ import anqi.stack.util.NetUtil;
 
 import static anqi.stack.util.NetUtil.showWaitingDialog;
 
-public class MainActivity extends AppCompatActivity implements TestInterface {
+public class MainActivity extends baseActivity implements TestInterface {
 
     private static TextView text;
     private final String basePath = "http://9.112.239.137:8080/p4-web-pg-debug";

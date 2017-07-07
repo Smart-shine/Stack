@@ -1,4 +1,4 @@
-package anqi.stack.Activity;
+package anqi.stack.activity;
 
 import android.app.Dialog;
 import android.content.Context;

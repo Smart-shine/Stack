@@ -5,17 +5,20 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import anqi.stack.Activity.TestInterface;
+import anqi.stack.activity.TestInterface;
 import anqi.stack.R;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -154,6 +157,7 @@ public class NetUtil {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 Log.d("失败","failed");
+                Toast.makeText(context, "请求失败，请重试 "+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -190,6 +194,7 @@ public class NetUtil {
             public void onFailure(Call call, IOException e) {
                 Log.d("failed", "failed");
                 e.printStackTrace();
+                Toast.makeText(context, "请求失败，请重试 "+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -217,7 +222,8 @@ public class NetUtil {
     }
 
     public static Dialog showWaitingDialog(Context context){
-        final Dialog dialog = new Dialog(context);
+        Reference<Context> weekContext = new WeakReference<>(context);
+        final Dialog dialog = new Dialog(weekContext.get());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.setContentView(R.layout.dialog_custom_progress);
