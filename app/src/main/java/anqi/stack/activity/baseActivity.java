@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import anqi.stack.R;
+import anqi.stack.util.NetUtil;
 
 /**
  * Created by niuanqi on 2017/7/7.
@@ -28,6 +29,12 @@ public class baseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_root_layout);
         initTempalteView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NetUtil.getInstent().dispatcher().cancelAll();
     }
 
     @Override

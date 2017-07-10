@@ -5,7 +5,7 @@ package anqi.stack.bean;
  * Created by niuanqi on 2017/7/4.
  */
 
-public class res_ult {
+public class resUlt {
 
 
     public static String getMenuList() {
@@ -13,7 +13,7 @@ public class res_ult {
     }
 
     public static void setMenuList(String menuList) {
-        res_ult.menuList = menuList;
+        resUlt.menuList = menuList;
     }
 
     public static String getPermissionList() {
@@ -21,7 +21,7 @@ public class res_ult {
     }
 
     public static void setPermissionList(String permissionList) {
-        res_ult.permissionList = permissionList;
+        resUlt.permissionList = permissionList;
     }
 
     public static String getRoleList() {
@@ -29,7 +29,7 @@ public class res_ult {
     }
 
     public static void setRoleList(String roleList) {
-        res_ult.roleList = roleList;
+        resUlt.roleList = roleList;
     }
 
     public  String getTonken() {

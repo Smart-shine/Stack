@@ -2,7 +2,6 @@ package anqi.stack.activity;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,12 +37,6 @@ public class MainActivity extends baseActivity implements TestInterface {
         SQLiteDatabase db = this.openOrCreateDatabase("stack.db", Context.MODE_PRIVATE, null);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        NetUtil.getInstent().dispatcher().cancelAll();
-    }
-
     public void click(View view) {
         switch (view.getId()) {
             case R.id.AsyncPost:
@@ -74,9 +67,8 @@ public class MainActivity extends baseActivity implements TestInterface {
                 SyncPostParam.put("password", "aq1sw2de");
                 NetUtil.doPostSyc(basePath + "/api/auth/login", SyncPostParam, this, dialog);
                 break;
-            case R.id.db:
-                Intent startDB = new Intent(this,DBdemo.class);
-                startActivity(startDB);
+            case R.id.slide:
+
                 break;
 
         }
