@@ -99,7 +99,13 @@ public class MainActivity extends baseActivity implements TestInterface {
         String flag = result.substring(0, 1);
         if (flag.equals("{")) {
             try {
+                long pre = System.currentTimeMillis();
+                Log.d("TimeCount 转换前：", String.valueOf(System.currentTimeMillis()));
                 JSONObject jsonObject = new JSONObject(result);
+                long after = System.currentTimeMillis();
+                Log.d("TimeCount 转换后：", String.valueOf(System.currentTimeMillis()));
+                Log.d("TimeCount 结果是：", String.valueOf((int)(after-pre))+"毫秒");
+                dialog.dismiss();
                 token = jsonObject.getString("token");
                 getSharedPreferences("global_token",MODE_PRIVATE).edit().putString("token",token).apply();
 
@@ -109,7 +115,13 @@ public class MainActivity extends baseActivity implements TestInterface {
         }
         if (flag.equals("["))
             try {
+                long pre = System.currentTimeMillis();
+                Log.d("TimeCount 转换前：", String.valueOf(System.currentTimeMillis()));
                 JSONArray jsonArray = new JSONArray(result);
+                long after = System.currentTimeMillis();
+                Log.d("TimeCount 转换后：", String.valueOf(System.currentTimeMillis()));
+                Log.d("TimeCount 结果是：", String.valueOf((int)(after-pre))+"毫秒");
+                dialog.dismiss();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -117,7 +129,7 @@ public class MainActivity extends baseActivity implements TestInterface {
             @Override
             public void run() {
                 text.setText(result);
-                dialog.dismiss();
+
             }
         });
 

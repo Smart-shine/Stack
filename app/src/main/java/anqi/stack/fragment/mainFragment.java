@@ -76,9 +76,14 @@ public class mainFragment extends Fragment {
                             break;
                     }
                 }
+                if(groupPosition ==2){
+                    switch (childPosition){
+                        case 0 :
+                            break;
+                    }
+                }
 
 
-                NetUtil.doPostAsync(UrlManager.AllRequests,params,getActivity(),dialog);
                 return true;
             }
         });
