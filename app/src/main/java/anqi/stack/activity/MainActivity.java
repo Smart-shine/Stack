@@ -1,8 +1,7 @@
 package anqi.stack.activity;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +16,7 @@ import java.util.Map;
 
 import anqi.stack.R;
 import anqi.stack.config.UrlManager;
+import anqi.stack.fragment.mainFragment;
 import anqi.stack.util.NetUtil;
 
 import static anqi.stack.util.NetUtil.showWaitingDialog;
@@ -24,27 +24,30 @@ import static anqi.stack.util.NetUtil.showWaitingDialog;
 public class MainActivity extends baseActivity implements TestInterface {
 
     private static TextView text;
-    private final String basePath = "http://9.112.239.137:8080/p4-web-pg-debug";
-    private static String token;
+    public static String token;
     static Dialog waiting;
     static Dialog waiting0;
+    int flag = 0;
+    mainFragment fragment ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fragment = new mainFragment();
         text = (TextView) findViewById(R.id.text);
-        SQLiteDatabase db = this.openOrCreateDatabase("stack.db", Context.MODE_PRIVATE, null);
+//        SQLiteDatabase db = this.openOrCreateDatabase("stack.db", Context.MODE_PRIVATE, null);
     }
 
     public void click(View view) {
+
         switch (view.getId()) {
             case R.id.AsyncPost:
                 waiting = showWaitingDialog(this);
                 Map<String, String> params = new HashMap<>();
                 params.put("username", "p4admin");
                 params.put("password", "aq1sw2de");
-                NetUtil.doPostAsync(basePath + "/api/auth/login", params, this, waiting);
+                NetUtil.doPostAsync(UrlManager.BASEPATH + "/api/auth/login", params, this, waiting);
                 break;
             case R.id.AsyncGet:
                 waiting0 = showWaitingDialog(this);
@@ -65,10 +68,26 @@ public class MainActivity extends baseActivity implements TestInterface {
                 Map<String, String> SyncPostParam = new HashMap<>();
                 SyncPostParam.put("username", "p4admin");
                 SyncPostParam.put("password", "aq1sw2de");
-                NetUtil.doPostSyc(basePath + "/api/auth/login", SyncPostParam, this, dialog);
+                NetUtil.doPostSyc(UrlManager.BASEPATH + "/api/auth/login", SyncPostParam, this, dialog);
                 break;
             case R.id.slide:
-
+                if(flag%2==0) {
+                    flag++;
+                    if(fragment!=null){
+                        Bundle bundle = new Bundle();
+                        bundle.putCharSequence("token",token);
+                        fragment.setArguments(bundle);
+                    }
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment, null)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                            .commit();
+                }else {
+                    flag--;
+                    getFragmentManager().beginTransaction()
+                            .remove(fragment)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                            .commit();
+                }
                 break;
 
         }
@@ -82,6 +101,8 @@ public class MainActivity extends baseActivity implements TestInterface {
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 token = jsonObject.getString("token");
+                getSharedPreferences("global_token",MODE_PRIVATE).edit().putString("token",token).apply();
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

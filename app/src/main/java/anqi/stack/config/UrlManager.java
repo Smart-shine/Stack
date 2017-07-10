@@ -17,5 +17,9 @@ public  class UrlManager {
 
     public final static String testGetUrl = "http://9.112.239.179:8080/p4-web-pg-debug/api/requests?noCache=1499308548133";
 
+    public final static String AllRequests = "http://9.112.239.179:8080/p4-web-pg-debug/api/requests?noCache=1499674399340";
+    public final static String MyRequests = "http://9.112.239.179:8080/p4-web-pg-debug/api/requests?noCache=1499676266582&Type=submitted";
+    public final static String MyApproved = "http://9.112.239.179:8080/p4-web-pg-debug/api/requests?noCache=1499676431902&Type=approved";
+
     public final static String baiduTestUrl = "http://api.map.baidu.com/location/ip?ak=请输入您的AK&coor=bd09ll";
 }

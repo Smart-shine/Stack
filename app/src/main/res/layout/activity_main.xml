@@ -9,58 +9,67 @@
 
     <Button
         android:id="@+id/AsyncPost"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:onClick="click"
         android:text="异步post" />
 
     <Button
         android:id="@+id/AsyncGet"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/AsyncPost"
+        android:layout_alignParentRight="true"
         android:onClick="click"
         android:text="异步get" />
 
     <Button
         android:id="@+id/SyncGet"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/AsyncGet"
         android:onClick="click"
+        android:layout_alignParentRight="true"
         android:text="同步get" />
 
     <Button
         android:id="@+id/SyncPost"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/SyncGet"
         android:onClick="click"
+        android:layout_alignParentRight="true"
         android:text="同步post" />
 
     <Button
         android:id="@+id/slide"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/SyncPost"
         android:onClick="click"
+        android:layout_alignParentRight="true"
         android:text="侧边菜单测试" />
     <Button
         android:id="@+id/jump"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/slide"
         android:onClick="click"
+        android:layout_alignParentRight="true"
         android:text="jump" />
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/fragment_container"
-        android:layout_width="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_width="300dp"
         android:layout_height="match_parent"/>
 
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_below="@id/jump">
+
 
         <TextView
             android:id="@+id/text"
